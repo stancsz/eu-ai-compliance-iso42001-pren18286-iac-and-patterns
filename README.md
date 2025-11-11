@@ -17,7 +17,7 @@ The repository maps each control area to implementation guidance (IaC and code),
 |------|-------------|----------------|
 | `iac/` | Cloud landing zones, guardrails, and control mappings for AWS Bedrock and GCP Vertex AI | Platform / Cloud Engineering |
 | `patterns/usage/` | Operational runbooks covering human oversight, post-market monitoring, and data lineage | Product / Compliance |
-| `patterns/code/otel/` | OpenTelemetry instrumentation patterns for inference services and ML pipelines | ML Engineering / SRE |
+| `patterns/code/otel/` | OpenTelemetry instrumentation patterns, schema, and exporter guidance | ML Engineering / SRE |
 | `docs/compliance/` | ISO 42001 & EU AI Act templates: risk, logging, PMM, oversight, internal audit | Compliance / Risk |
 | `docs/prd/` | Product Requirement Docs for Bedrock and Vertex AI control baselines | Product / Platform |
 | `templates/` | CSV/MD templates for registers, change logs, training, and traceability | Control Owners |
@@ -40,8 +40,16 @@ The repository maps each control area to implementation guidance (IaC and code),
 
 1. **Plan** – Use the PRDs in `docs/prd/` to scope your solution, identify required controls, and assign owners.
 2. **Build** – Instantiate infrastructure from `iac/`, populate control mappings, and integrate code/usage patterns.
-3. **Operate** – Run oversight, PMM, and logging processes using the patterns and templates provided.
-4. **Evidence** – Store artefacts (risk registers, datasheets, PMM reports, audits) using the templates in `templates/` and link them back to control mappings for traceability.
+3. **Instrument** – Apply the OpenTelemetry schema in `patterns/code/otel/otel_schema.yaml`, emit traces/logs to your collector, and tag spans with control IDs for traceability.
+4. **Operate** – Run oversight, PMM, and logging processes using the patterns and templates provided.
+5. **Evidence** – Store artefacts (risk registers, datasheets, PMM reports, audits, telemetry exports) using the templates in `templates/` and link them back to control mappings.
+
+### Telemetry & Evidence Storage
+
+- **Instrumentation examples:** See `patterns/code/otel/python_inference_example.py` for Bedrock calls and `patterns/code/otel/vertex_pipeline_instrumentation.md` for Vertex AI pipelines.
+- **Schema:** Align spans/events with `patterns/code/otel/otel_schema.yaml` so downstream analytics can correlate telemetry to controls.
+- **Collector guidance:** Export traces and logs to an OTLP collector (AWS Distro, Cloud Ops Agent, etc.) and persist immutable copies in your audit project/bucket as part of the logging plan (`docs/compliance/logging_monitoring_plan.md`).
+- **Trace register:** Record canonical trace IDs tied to model runs using `templates/run_trace_log.csv` to demonstrate auditability.
 
 ## Control-to-Repository Mapping
 

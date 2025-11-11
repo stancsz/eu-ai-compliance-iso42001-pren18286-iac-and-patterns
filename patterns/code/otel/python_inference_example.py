@@ -10,9 +10,23 @@ from typing import Any, Dict
 
 from opentelemetry import trace
 from opentelemetry.trace import Span
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 
 # Placeholder Bedrock client import; replace with boto3 or AWS SDK call
 # from my_bedrock_client import invoke_model
+
+# Configure a tracer provider once during app startup.
+provider = TracerProvider()
+trace.set_tracer_provider(provider)
+
+# Send spans to your OTLP collector (update endpoint/auth as required).
+otlp_exporter = OTLPSpanExporter(endpoint="https://otel-collector.example.com/v1/traces")
+provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
+
+# Optionally also stream to console for local debugging.
+provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
 
 tracer = trace.get_tracer(__name__)
 
