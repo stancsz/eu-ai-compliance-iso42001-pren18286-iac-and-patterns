@@ -1,51 +1,74 @@
-# EU AI Compliance Golden Reference
+# EU AI Compliance Control Reference
 
-This repository provides a golden reference implementation that helps AI teams meet both **ISO/IEC 42001** (AI Management System) and **prEN 18286 / EU AI Act** (high-risk AI controls) requirements. It contains four pillars:
+This repository is a control reference for teams that must operate AI systems in line with **ISO/IEC 42001** and **prEN 18286 / EU AI Act** requirements. It bundles opinionated scaffolding, patterns, and documentation templates so that platform, product, and compliance teams share a single source for controls, evidence, and responsibilities.
 
-1. **Infrastructure as Code (IaC)** blueprints for AWS Bedrock and GCP Vertex AI landing zones.
-2. **Usage patterns** that demonstrate compliant operating practices (risk, data, oversight, PMM).
-3. **Code patterns** focused on observability (OpenTelemetry) and control implementation.
-4. **Compliance documentation templates** to operationalize the AI Management System (AIMS).
+> ⚠️ All content is intentionally templated. Replace placeholders with system-specific details, track decisions in your change records, and store evidence in the locations referenced throughout the repo.
 
-> ⚠️ This repo is intentionally scaffolded. Replace placeholder sections with project-specific details, track decision logs, and store evidence in the referenced locations to remain audit-ready.
+## Standards Alignment
 
-## Repository Layout
+- **ISO/IEC 42001** provides the AI Management System (AIMS) structure: governance, risk treatment, internal audit, and continual improvement.
+- **prEN 18286 / EU AI Act** defines the control objectives for high-risk AI systems: risk management, data governance, technical documentation, logging, human oversight, and post-market monitoring.
+
+The repository maps each control area to implementation guidance (IaC and code), operational patterns, and evidence templates to maintain audit readiness.
+
+## Repository Structure
+
+| Path | Description | Primary Owners |
+|------|-------------|----------------|
+| `iac/` | Cloud landing zones, guardrails, and control mappings for AWS Bedrock and GCP Vertex AI | Platform / Cloud Engineering |
+| `patterns/usage/` | Operational runbooks covering human oversight, post-market monitoring, and data lineage | Product / Compliance |
+| `patterns/code/otel/` | OpenTelemetry instrumentation patterns for inference services and ML pipelines | ML Engineering / SRE |
+| `docs/compliance/` | ISO 42001 & EU AI Act templates: risk, logging, PMM, oversight, internal audit | Compliance / Risk |
+| `docs/prd/` | Product Requirement Docs for Bedrock and Vertex AI control baselines | Product / Platform |
+| `templates/` | CSV/MD templates for registers, change logs, training, and traceability | Control Owners |
 
 ```
-iac/                 # Cloud landing zones, shared guardrails, control mappings
-patterns/
-  usage/             # Operational runbooks & HITL/HOTL patterns
-  code/otel/         # Observability & logging patterns for services & pipelines
-docs/
-  compliance/        # ISO 42001 & prEN 18286 templates and playbooks
-  prd/               # Product Requirement Docs for AWS Bedrock & GCP Vertex AI solutions
-templates/           # Registers, logs, and evidence capture forms
+├── docs/
+│   ├── compliance/      # Control playbooks and ISO/EU templates
+│   └── prd/             # Platform-specific PRDs (AWS Bedrock, GCP Vertex AI)
+├── iac/
+│   ├── aws/             # Terraform stubs + control mapping for Bedrock
+│   ├── gcp/             # Terraform stubs + control mapping for Vertex AI
+│   └── modules/         # Reusable networking/perimeter modules
+├── patterns/
+│   ├── usage/           # Operational procedures (HITL, PMM, data lineage)
+│   └── code/otel/       # Instrumentation examples & schema
+└── templates/           # Evidence capture forms (CSV/Markdown)
 ```
 
-## Getting Started
+## Working with Controls
 
-- Use the PRDs in `docs/prd/` to define scope, controls, and responsibilities for Bedrock and Vertex AI workloads.
-- Instantiate IaC modules from `iac/` to provision environments with compliance guardrails.
-- Adopt usage and code patterns to enforce logging, human oversight, and post-market monitoring.
-- Populate compliance templates with project-specific data, linking to evidence in your chosen system of record.
+1. **Plan** – Use the PRDs in `docs/prd/` to scope your solution, identify required controls, and assign owners.
+2. **Build** – Instantiate infrastructure from `iac/`, populate control mappings, and integrate code/usage patterns.
+3. **Operate** – Run oversight, PMM, and logging processes using the patterns and templates provided.
+4. **Evidence** – Store artefacts (risk registers, datasheets, PMM reports, audits) using the templates in `templates/` and link them back to control mappings for traceability.
 
-## Compliance Traceability
+## Control-to-Repository Mapping
 
-| Control Area | Repository Source | Evidence Expectations |
-|--------------|-------------------|-----------------------|
-| Risk Management (Art. 9) | `docs/compliance/risk_management_plan.md` | Risk register, mitigation status, approval logs |
-| Data Governance (Art. 10) | `docs/compliance/data_gov_playbook.md` | Data lineage reports, bias assessments, access logs |
-| Technical Documentation (Art. 11) | `docs/prd/*`, `templates/model_card.md` | Versioned model cards, design decisions, validation results |
-| Logging & Record Keeping (Art. 12) | `patterns/code/otel/`, `docs/compliance/logging_monitoring_plan.md` | Immutable log storage, alerting evidence, access reviews |
-| Human Oversight (Art. 14) | `patterns/usage/human_oversight_runbook.md` | Training records, override audit trails, operator feedback |
-| Post-Market Monitoring (Art. 72) | `docs/compliance/pmm_plan.md` | PMM reports, incident follow-ups, continuous improvement backlog |
-| Internal Audit (ISO 42001 Cl. 9.2) | `docs/compliance/internal_audit_checklist.md` | Audit schedule, findings register, corrective actions |
+| Control Area | Implementation Guidance | Evidence Template(s) |
+|--------------|------------------------|----------------------|
+| Risk Management (EU AI Act Art. 9) | `docs/compliance/risk_management_plan.md`, PRDs | `templates/risk_register.csv`, change log |
+| Data Governance (Art. 10) | `docs/compliance/data_gov_playbook.md`, usage patterns | `templates/data_inventory.csv` |
+| Technical Documentation (Art. 11) | `docs/prd/*`, `docs/compliance/technical_documentation_index.md` | Link to architecture, model cards, validation evidence |
+| Logging & Record Keeping (Art. 12) | `patterns/code/otel/`, `docs/compliance/logging_monitoring_plan.md` | `templates/alert_test_log.csv`, SIEM dashboards |
+| Human Oversight (Art. 14) | `patterns/usage/human_oversight_runbook.md`, oversight playbook | `templates/operator_training_log.csv` |
+| Post-Market Monitoring (Art. 72) | `patterns/usage/post_market_monitoring.md`, PMM plan | `templates/pmm_report_template.md` |
+| Internal Audit (ISO 42001 Cl. 9.2) | `docs/compliance/internal_audit_checklist.md` | Audit reports, corrective actions |
 
-## Next Steps for Teams
+## Adoption Checklist
 
-- Assign a **Control Owner** for each template and ensure evidence is linked.
-- Integrate IaC modules into CI/CD pipelines with policy checks (e.g., OPA, AWS Config, GCP Policy Controller).
-- Embed OpenTelemetry exporters and centralize traces/logs in your SIEM with retention policies that meet regulatory requirements.
-- Schedule recurring post-market monitoring reviews and document outcomes in the provided templates.
+- [ ] Confirm scope, risk classification, and stakeholders in the relevant PRD.
+- [ ] Deploy the appropriate IaC stacks and complete `CONTROL_MAPPING.md` entries with resource IDs and evidence links.
+- [ ] Instrument workloads with OpenTelemetry using the provided schema and examples.
+- [ ] Populate governance templates and registers with project-specific data.
+- [ ] Schedule PMM, oversight, and internal audit routines; capture outputs via the provided templates.
+- [ ] Review and update artefacts during management review per ISO 42001.
 
-Maintaining compliance is continuous—treat this scaffold as the foundation for your organization’s AI governance program.
+## Contributing
+
+1. Fork or branch from `main`.
+2. Update documentation, IaC, or patterns with control references and evidence guidance.
+3. Run linting/validation for any code or templates you modify.
+4. Submit a pull request referencing the control(s) affected and evidence impact.
+
+For questions about control ownership or audit expectations, reach out to the AI Governance working group or your compliance lead.
