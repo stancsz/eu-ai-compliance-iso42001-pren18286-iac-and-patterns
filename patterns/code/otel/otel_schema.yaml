@@ -1,0 +1,38 @@
+version: 1
+schema_url: https://example.com/aims/otel/schema
+attributes:
+  aims_control_id:
+    description: Identifier linking telemetry to ISO 42001 / EU AI Act control.
+    type: string
+  eu_ai_act_article:
+    description: EU AI Act article associated with the event.
+    type: string
+  risk_level:
+    description: Risk classification (low, medium, high, unacceptable).
+    type: string
+  model_version:
+    description: Deployed model version identifier.
+    type: string
+  dataset_id:
+    description: Dataset or lineage reference.
+    type: string
+  override_required:
+    description: Flag indicating if human override was needed.
+    type: boolean
+events:
+  human_override:
+    attributes:
+      operator_id:
+        type: string
+      decision:
+        type: string
+      reason_code:
+        type: string
+  data_validation:
+    attributes:
+      validation_suite:
+        type: string
+      status:
+        type: string
+      issues_found:
+        type: integer
